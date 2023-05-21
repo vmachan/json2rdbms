@@ -2,6 +2,18 @@ import config
 import json
 import logging
 
+# This is the main logic for walking the JSON content
+# This method (jsonwalk) expects the JSON content (json_data), the node for this content (parent_node) and the payload to populate (io_payload)
+# It then parses the JSON and when it finds another node to dive into, it calls itself and passes the parameters as needed
+# When it finds the lowest level elements i.e. not another node, it then generates an INSERT statement with all the elements for this node
+# It adds the INSERT statement to the ins_stmts dictionary in the payload object
+#
+# Assumptions
+# 1. The target table names are same as the JSON node names
+# 2. The JSON content is valid i.e. please pre-validate that the JSON is valid before sending it to this method
+# Limitation/Enhancements
+# 1. As of now, the data type mapping is hard-coded to a few, this could be improved to run off a generic user-defined mapping construct (TBD)
+
 logging.basicConfig(filename=config.logfile, level=logging.WARN)
 
 def jsonwalk(json_data, parent_node, io_payload):
